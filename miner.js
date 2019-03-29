@@ -93,18 +93,20 @@ module.exports = class Miner extends Client {
       // Search for a proof.  If one is found, the miner should add the coinbase
       // rewards (including the transaction fees) to its wallet.
         if (this.isValidBlock(this.currentBlock)) {
+            this.log("FOUND PROOF")
             this.wallet.addUTXO(this.currentBlock.coinbaseTX.outputs[0], this.currentBlock.coinbaseTX.id, 0)
+      //
+      // Next, announce the proof to all other miners.
+            this.announceProof();
+      //
+      // After that, create a new block and start searching for a proof.
+      // The 'startNewSearch' method might be useful for this last step.
+            this.startNewSearch();
         }
         
         this.currentBlock.proof++;
     }
-      //
-      // Next, announce the proof to all other miners.
-        this.announceProof();
-      //
-      // After that, create a new block and start searching for a proof.
-      // The 'startNewSearch' method might be useful for this last step.
-        this.startNewSearch();
+      
 
       
     // If we are testing, don't continue the search.
