@@ -8,7 +8,7 @@ const utils = require('./utils.js');
  * 
  * One exception: coinbase transactions have no inputs; Their total
  * outputs should match up with the transaction fees from the
- * transactions in the block, plus an extra reward for for the block
+ * transactions in the block, plus an extra reward for the block
  * itself.
  * 
  * For a transaction, the mining fee is specified as the difference
@@ -86,7 +86,6 @@ module.exports = class Transaction {
    * @returns {boolean} True if the transaction is valid, false otherwise.
    */
   isValid(utxos) {
-
     //
     // **YOUR CODE HERE**
     //
@@ -97,14 +96,47 @@ module.exports = class Transaction {
     //
     // 1) Look up the list of UTXOs available for the transaction in the
     //      'utxos' argument.
+//       console.log("\nUTXOS: ")
+//       console.log(utxos)
+//       console.log("\nINPUTS ")
+//       console.log(this.inputs)
+//       console.log("OUTPUTS ")
+//       console.log(this.outputs)
+      
+      let totalInputAmt = 0;
+      
+      for (let i in this.inputs) {
+          let inp = this.inputs[i]
+        let utxolist = utxos[inp['txID']];
+//         console.log(utxolist);
     // 2) From that list, find the matching utxo.  (If you can't find it,
     //      the transaction is invalid).
+        let match = utxolist[inp['outputIndex']]
+//         console.log(match);
+      
     // 3) Verify the public key hash in the previous output matches the
     //      transaction's public key, and that the signature on the UTXO
     //      is valid.
+        let ver = utils.verifySignature(inp['pubKey'], match, inp['sig']);
+        
+        if (!ver) {
+            return false;
+        }
+        
+        if (utils.calcAddress(inp['pubKey']) !== match['address']) {
+            return false;
+        }
+      
     // 4) From here, you can gather the amount of **input** available to
     //      this transaction.
-
+        totalInputAmt += match['amount'];
+      }
+      
+      if (totalInputAmt >= this.totalOutput()) {
+          return true;
+      }
+      
+      return false;
   }
 
   /**

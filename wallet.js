@@ -95,15 +95,38 @@ module.exports = class Wallet {
     // Gather enough "coins" from the wallet to meet or exceed
     // the specified amount.  Create an array of inputs that
     // can unlock the UTXOs.
-    //
+    
+    let sum = 0
+    let spendThese = []
+    while (sum < amount) {
+        let coin = this.coins.pop();
+        spendThese.push(coin)
+        sum += coin.amount
+    }
+    
     // Return an object containing the array of inputs and the
     // amount of change needed.
 
+    let inps = []
+    let change = 0;
+    
+    for (let i in spendThese) {
+        let coin = spendThese[i]
+        let input = {} // {txID, outputIndex, pubKey, sig}\
+        console.log(coin.txID)
+        let wkp = this.addresses[coin.output.address]
+        input.txID = coin.txID
+        input.outputIndex = coin.outputIndex
+        input.pubKey = wkp.public
+        input.sig = utils.sign(wkp.private, coin.output)
+        
+        inps.push(input)
+    }
 
     // Currently returning default values.
     return {
-      inputs: [],
-      changeAmt: 0,
+      inputs: inps,
+      changeAmt: change,
     };
 
   }

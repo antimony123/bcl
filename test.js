@@ -15,6 +15,7 @@ const utils = require('./utils.js');
 const kp = utils.generateKeypair();
 const newKeypair = utils.generateKeypair();
 
+console.log("beginning test")
 
 describe('utils', function() {
   describe('.verifySignature', function() {
@@ -161,7 +162,7 @@ describe("Wallet", () => {
 describe('Block', function() {
   describe('#addTransaction', function() {
     // Slow test.
-    /*
+    
     let aliceWallet = new Wallet();
     let bobWallet = new Wallet();
     let charlieWallet = new Wallet();
@@ -181,6 +182,5 @@ describe('Block', function() {
       assert.equal(aliceWallet.balance, 0);
       assert.equal(bobWallet.balance, 110);
     });
-    //*/
   });
 });

@@ -3,7 +3,7 @@
 let Block = require('./block.js');
 let Client = require('./client.js');
 
-const NUM_ROUNDS_MINING = 2000;
+const NUM_ROUNDS_MINING = 20;
 
 const PROOF_FOUND = "PROOF_FOUND";
 const START_MINING = "START_MINING";
@@ -92,14 +92,21 @@ module.exports = class Miner extends Client {
       //
       // Search for a proof.  If one is found, the miner should add the coinbase
       // rewards (including the transaction fees) to its wallet.
+        if (this.isValidBlock(this.currentBlock)) {
+            this.wallet.addUTXO(this.currentBlock.coinbaseTX.outputs[0], this.currentBlock.coinbaseTX.id, 0)
+        }
+        
+        this.currentBlock.proof++;
+    }
       //
       // Next, announce the proof to all other miners.
+        this.announceProof();
       //
       // After that, create a new block and start searching for a proof.
       // The 'startNewSearch' method might be useful for this last step.
+        this.startNewSearch();
 
-      this.currentBlock.proof++;
-    }
+      
     // If we are testing, don't continue the search.
     if (!oneAndDone) {
       // Check if anyone has found a block, and then return to mining.
