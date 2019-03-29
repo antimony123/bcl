@@ -3,7 +3,7 @@
 let Block = require('./block.js');
 let Client = require('./client.js');
 
-const NUM_ROUNDS_MINING = 20;
+const NUM_ROUNDS_MINING = 2000;
 
 const PROOF_FOUND = "PROOF_FOUND";
 const START_MINING = "START_MINING";
